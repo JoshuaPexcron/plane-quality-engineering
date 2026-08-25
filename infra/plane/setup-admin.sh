@@ -32,7 +32,10 @@ curl -s -b "$jar" -D "$headers" -o /dev/null \
   --data-urlencode "first_name=CI" \
   --data-urlencode "last_name=Admin" \
   --data-urlencode "company_name=CI" \
-  --data-urlencode "is_telemetry_enabled=false"
+  --data-urlencode "is_telemetry_enabled=False"
+# Note the capital F: Plane passes this form value straight into a Django
+# BooleanField, which only accepts "True"/"False". Lowercase "false" makes
+# the endpoint crash with a 500 instead of returning a validation error.
 
 # The redirect hides the real outcome, so verify the state we care about.
 if curl -s "$base/api/instances/" | grep -q '"is_setup_done":true'; then

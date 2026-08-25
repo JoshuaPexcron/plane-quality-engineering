@@ -1,0 +1,14 @@
+# local-only project material (never publish)
+CLAUDE.md
+PLAN.md
+plan/
+learning/
+*.pdf
+.env
+
+# dependencies & tool output
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+public/

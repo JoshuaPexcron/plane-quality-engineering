@@ -3,6 +3,7 @@ CLAUDE.md
 findings/
 .agents/
 .claude/
+skills-lock.json
 PLAN.md
 plan/
 learning/

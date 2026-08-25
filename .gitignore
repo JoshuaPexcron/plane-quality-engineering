@@ -1,6 +1,8 @@
 # local-only project material (never publish)
 CLAUDE.md
 findings/
+.agents/
+.claude/
 PLAN.md
 plan/
 learning/

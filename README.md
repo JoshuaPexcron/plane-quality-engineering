@@ -1,8 +1,5 @@
 # plane-quality-engineering
 
-Risk-based test automation for [Plane](https://github.com/makeplane/plane), the
-open-source project management platform — Playwright, TypeScript, API testing,
-and CI with a live quality dashboard.
+Risk-based test automation for [Plane](https://github.com/makeplane/plane), an open-source project management platform. I test a self-hosted Plane instance with Playwright and TypeScript: UI tests, API tests, and a CI pipeline that boots the whole product in Docker before every run. A written risk analysis decides what gets tested and why.
 
-> **Status: work in progress.** Test strategy, automated suite, and dashboard
-> are being built in phases. This README will grow with the project.
+> Work in progress. The test strategy comes first, then the automated suite, then a live quality dashboard on GitHub Pages.

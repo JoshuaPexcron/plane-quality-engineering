@@ -2,7 +2,7 @@
   "name": "plane-quality-engineering",
   "version": "1.0.0",
   "private": true,
-  "description": "Risk-based test automation for Plane (open-source project management) — Playwright, TypeScript, API testing, CI with a live quality dashboard.",
+  "description": "Risk-based test automation for Plane, an open-source project management platform: Playwright, TypeScript, API testing, and CI with a live quality dashboard.",
   "author": "Joshua Haas",
   "license": "MIT",
   "scripts": {

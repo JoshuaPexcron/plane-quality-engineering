@@ -1,0 +1,29 @@
+{
+  "name": "plane-quality-engineering",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Risk-based test automation for Plane (open-source project management) — Playwright, TypeScript, API testing, CI with a live quality dashboard.",
+  "author": "Joshua Haas",
+  "license": "MIT",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --project=ui",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshuaPexcron/plane-quality-engineering.git"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.3.0",
+    "eslint": "^10.9.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.68.0"
+  }
+}

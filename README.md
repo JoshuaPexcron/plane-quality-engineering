@@ -1,4 +1,4 @@
-# plane-qa-showcase
+# plane-quality-engineering
 
 Risk-based test automation for [Plane](https://github.com/makeplane/plane), the
 open-source project management platform — Playwright, TypeScript, API testing,

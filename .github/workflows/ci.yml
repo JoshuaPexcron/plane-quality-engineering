@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    env:
+      PLANE_BASE_URL: http://localhost
+      # Throwaway credentials for the Plane instance that lives and dies
+      # inside this CI run. Not secrets: the instance is only reachable
+      # from the runner itself.
+      PLANE_ADMIN_EMAIL: ci-admin@example.com
+      PLANE_ADMIN_PASSWORD: Ci-Plane-2026-x7K!
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: Boot Plane
+        working-directory: infra/plane
+        run: docker compose --env-file variables.env up -d --quiet-pull
+
+      - name: Wait for Plane to be ready
+        run: bash infra/plane/wait-for-plane.sh
+
+      - name: Create instance admin
+        run: bash infra/plane/setup-admin.sh
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run tests
+        run: npx playwright test
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Show container logs on failure
+        if: failure()
+        working-directory: infra/plane
+        run: docker compose --env-file variables.env logs --tail 100 api migrator

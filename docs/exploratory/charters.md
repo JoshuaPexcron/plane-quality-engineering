@@ -4,13 +4,13 @@ Timeboxed sessions, 45 to 60 minutes each. One charter per session. Notes go int
 
 The automated suite covers the known risks. These sessions exist to find what no one put on a list.
 
-| Charter | Focus |
-|---------|-------|
-| E1 | Work item creation with hostile input: very long titles, emoji, HTML and script tags, markdown edge cases |
-| E2 | Role boundaries as guest and member: hunt for actions the UI forgot to hide or the API forgot to block |
-| E3 | Drag and drop and bulk operations on a busy board: reordering, multi-select, undo |
-| E4 | Keyboard-only navigation through the core flow: login, create an item, comment |
-| E5 | Reserve: follow up on anything suspicious from E1 to E4 |
+| Charter | Focus                                                                                                     |
+| ------- | --------------------------------------------------------------------------------------------------------- |
+| E1      | Work item creation with hostile input: very long titles, emoji, HTML and script tags, markdown edge cases |
+| E2      | Role boundaries as guest and member: hunt for actions the UI forgot to hide or the API forgot to block    |
+| E3      | Drag and drop and bulk operations on a busy board: reordering, multi-select, undo                         |
+| E4      | Keyboard-only navigation through the core flow: login, create an item, comment                            |
+| E5      | Reserve: follow up on anything suspicious from E1 to E4                                                   |
 
 ## Session rules
 

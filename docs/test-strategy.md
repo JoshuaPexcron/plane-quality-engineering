@@ -8,16 +8,16 @@ Version under test: Plane v1.4.2, self-hosted with Docker Compose, image tags pi
 
 For each product area I asked what could go wrong, scored likelihood and impact, and let the score decide how much testing the area gets. The scores are my assessment after exploring the product manually and reading its API behavior.
 
-| ID | Risk | Likelihood | Impact | Priority |
-|----|------|-----------|--------|----------|
-| R1 | Access control fails: users can't log in, or sessions leak into protected areas | Med | High | High |
-| R2 | Role permissions fail: a guest or member can do admin-only actions, or data crosses workspace boundaries | Med | High | High |
-| R3 | Work item lifecycle breaks: creating, editing or moving items fails or loses data | High | High | High |
-| R4 | Project management breaks: projects can't be created or configured, or deletion is too easy | Low | High | Med |
-| R5 | API contract breaks: integrations that depend on the REST API fail silently | Med | High | High |
-| R6 | Collaboration breaks: comments get lost or attributed wrongly | Low | Med | Low |
-| R7 | Input validation gaps: invalid data gets accepted and corrupts projects | Med | Med | Med |
-| R8 | Accessibility barriers: keyboard or screen reader users are blocked from core flows | Med | Med | Med |
+| ID  | Risk                                                                                                     | Likelihood | Impact | Priority |
+| --- | -------------------------------------------------------------------------------------------------------- | ---------- | ------ | -------- |
+| R1  | Access control fails: users can't log in, or sessions leak into protected areas                          | Med        | High   | High     |
+| R2  | Role permissions fail: a guest or member can do admin-only actions, or data crosses workspace boundaries | Med        | High   | High     |
+| R3  | Work item lifecycle breaks: creating, editing or moving items fails or loses data                        | High       | High   | High     |
+| R4  | Project management breaks: projects can't be created or configured, or deletion is too easy              | Low        | High   | Med      |
+| R5  | API contract breaks: integrations that depend on the REST API fail silently                              | Med        | High   | High     |
+| R6  | Collaboration breaks: comments get lost or attributed wrongly                                            | Low        | Med    | Low      |
+| R7  | Input validation gaps: invalid data gets accepted and corrupts projects                                  | Med        | Med    | Med      |
+| R8  | Accessibility barriers: keyboard or screen reader users are blocked from core flows                      | Med        | Med    | Med      |
 
 R3 scores highest because work items are Plane's core value and its most actively changed code. R5 is high because my own API exploration already surfaced silent failures: fields that get ignored without an error, and one endpoint that reports success while storing nothing. R7 is confirmed relevant for the same reason, including one crash on malformed input where a validation error should be.
 

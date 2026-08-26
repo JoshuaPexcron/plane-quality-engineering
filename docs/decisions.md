@@ -45,3 +45,23 @@ Plane's auth endpoints redirect on success and on failure alike, with the error 
 ## Retries once in CI, never locally
 
 A flaky test that passes on retry is still a flaky test. Locally it fails loudly so I fix it. In CI one retry avoids losing a full run to a transient hiccup, and the recorded trace from the retry gives me the evidence to investigate.
+
+## One seed script prepares any instance
+
+CI starts from an empty database on every run, so everything the tests need has to come from a script: the workspace, a second workspace for the cross-workspace test, the member and guest accounts, and the API tokens. `scripts/seed.ts` does all of that and writes the results into `.env`, the same file the tests read locally. Every step checks whether its work already exists, so I can run the script as often as I want.
+
+## Playwright's request context is the API client
+
+I planned a small client class and then didn't need one. A Playwright request context with the `X-API-Key` header set once does the job, and the fixtures hand one context per role to the tests. `lib/api-client.ts` only holds the URL prefix, the response types the tests assert on, and four setup helpers that several tests share.
+
+## Tests pin what the product does, with a comment where it differs from the plan
+
+Two API tests came out different from the test list. An invalid API key gets a 403, not the 401 I expected, and the work item list ignores a state filter without an error. Both are defensible, so the tests assert the real behavior and say in a comment why the plan said something else. A test that encodes my expectation instead of the product's behavior would fail forever and teach nothing.
+
+## Random suffix in test data names
+
+My first version named test projects with a timestamp. Two parallel workers created a project in the same millisecond and one of them got a 409. Names and identifiers now carry a random suffix. Small lesson, but a real one: a timestamp is not unique once tests run in parallel.
+
+## No automatic retry on rate limits
+
+Plane's public API allows 60 requests per minute per token. A full run of the API suite uses about 45, so one run fits and two runs inside the same minute don't. I could catch the 429 and wait, but I'd rather see the failure: it tells me the suite got too chatty and needs a second token or fewer setup calls, not a hidden sleep.

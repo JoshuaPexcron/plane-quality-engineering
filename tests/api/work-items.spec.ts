@@ -4,7 +4,7 @@ import {
   listStates,
   workspaceUrl,
   type Comment,
-  type Page,
+  type Paginated,
   type WorkItem,
 } from '../../lib/api-client.ts';
 
@@ -56,7 +56,7 @@ test('GET work items lists every created item with its state @R5', async ({ api,
   const response = await api.get(`${workspaceUrl}/projects/${testProject.id}/issues/`);
   expect(response.status()).toBe(200);
 
-  const items = ((await response.json()) as Page<WorkItem>).results;
+  const items = ((await response.json()) as Paginated<WorkItem>).results;
   expect(items).toHaveLength(2);
   expect(items.find((i) => i.id === a.id)?.state).toBe(backlog.id);
   expect(items.find((i) => i.id === b.id)?.state).toBe(started.id);
@@ -70,7 +70,7 @@ test('DELETE work item removes it from the next list @R5', async ({ api, testPro
   expect(del.status()).toBe(204);
 
   const list = await api.get(`${workspaceUrl}/projects/${testProject.id}/issues/`);
-  const ids = ((await list.json()) as Page<WorkItem>).results.map((i) => i.id);
+  const ids = ((await list.json()) as Paginated<WorkItem>).results.map((i) => i.id);
   expect(ids).not.toContain(item.id);
 });
 
@@ -98,7 +98,7 @@ test('POST comment shows up in GET with the right author @R6', async ({ api, tes
 
   const me = (await (await api.get('/api/v1/users/me/')).json()) as { id: string };
   const list = await api.get(commentsUrl);
-  const comments = ((await list.json()) as Page<Comment>).results;
+  const comments = ((await list.json()) as Paginated<Comment>).results;
   expect(comments).toHaveLength(1);
   expect(comments[0].comment_html).toBe('<p>qa comment</p>');
   expect(comments[0].created_by).toBe(me.id);

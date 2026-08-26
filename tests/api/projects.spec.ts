@@ -3,7 +3,7 @@ import {
   createProject,
   uniqueName,
   workspaceUrl,
-  type Page,
+  type Paginated,
   type Project,
 } from '../../lib/api-client.ts';
 
@@ -31,7 +31,7 @@ test('GET projects lists the created project inside a sane pagination envelope @
   const response = await api.get(`${workspaceUrl}/projects/`);
   expect(response.status()).toBe(200);
 
-  const page = (await response.json()) as Page<Project>;
+  const page = (await response.json()) as Paginated<Project>;
   expect(page.count).toBe(page.results.length);
   expect(page.total_count).toBeGreaterThanOrEqual(page.count);
   expect(page.results.map((p) => p.id)).toContain(testProject.id);

@@ -36,7 +36,7 @@ export type Comment = {
 };
 
 // Every list endpoint wraps its items in this pagination envelope.
-export type Page<T> = {
+export type Paginated<T> = {
   results: T[];
   total_count: number;
   count: number;
@@ -93,5 +93,5 @@ export async function createWorkItem(
 
 export async function listStates(api: APIRequestContext, projectId: string) {
   const response = await api.get(`${workspaceUrl}/projects/${projectId}/states/`);
-  return ((await response.json()) as Page<State>).results;
+  return ((await response.json()) as Paginated<State>).results;
 }

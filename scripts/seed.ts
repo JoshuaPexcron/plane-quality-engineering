@@ -63,11 +63,11 @@ async function signUpOrIn(email: string, password: string): Promise<Session> {
   return session;
 }
 
+// Fails with the status and body on error; tolerates empty bodies (204).
 async function json<T>(response: APIResponse): Promise<T> {
-  if (!response.ok()) {
-    throw new Error(`${response.url()} -> ${response.status()} ${await response.text()}`);
-  }
-  return response.json();
+  const text = await response.text();
+  if (!response.ok()) throw new Error(`${response.url()} -> ${response.status()} ${text}`);
+  return text ? JSON.parse(text) : undefined;
 }
 
 async function ensureWorkspace(admin: Session, workspace: { name: string; slug: string }) {

@@ -47,6 +47,9 @@ jobs:
       - name: Create instance admin
         run: bash infra/plane/setup-admin.sh
 
+      - name: Seed workspaces, roles and API tokens
+        run: npm run seed
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 

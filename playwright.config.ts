@@ -18,6 +18,10 @@ export default defineConfig({
   },
   projects: [
     {
+      name: 'api',
+      testDir: './tests/api',
+    },
+    {
       name: 'ui',
       testDir: './tests/ui',
       use: { ...devices['Desktop Chrome'] },

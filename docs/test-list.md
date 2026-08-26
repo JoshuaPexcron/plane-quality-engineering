@@ -32,7 +32,7 @@ The final list: 33 automated tests, each tagged with the risk it covers. The ris
 | API-04 | R5   | DELETE project succeeds, next GET returns 404                                     |
 | API-05 | R5   | POST work item returns 201, fields match what was sent                            |
 | API-06 | R5   | PATCH work item state and priority, both persist                                  |
-| API-07 | R5   | GET work items with a state filter returns only matching items                    |
+| API-07 | R5   | GET work items lists every created item with its correct state                    |
 | API-08 | R5   | DELETE work item, it is gone from the next list                                   |
 | API-09 | R1   | Any endpoint without an API key returns 401                                       |
 | API-10 | R1   | Any endpoint with an invalid API key returns 401                                  |
@@ -55,3 +55,5 @@ The scans report to the dashboard. Only a growing count of critical violations a
 ## Notes on the finalization
 
 I kept the list at 33 after exploring the product. Two things I learned along the way strengthened the negative tests rather than adding new ones: the API accepts unknown field names without an error in some places, and one input crashed the server where a validation message should be. API-13 and API-14 target exactly this class of problem. Findings that don't fit an automated test go to the exploratory sessions and to bug reports.
+
+Two tests changed during implementation, because the product behaves differently from my first draft. API-07 was planned as a state filter test, but the public API has no state filter on the work item list: the query parameter gets ignored without an error. The test now verifies the list itself. API-10 expected 401 for an invalid key; Plane returns 403. Both are defensible, so the tests pin the real behavior and say so in a comment.

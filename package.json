@@ -2,12 +2,15 @@
   "name": "plane-quality-engineering",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Risk-based test automation for Plane, an open-source project management platform: Playwright, TypeScript, API testing, and CI with a live quality dashboard.",
   "author": "Joshua Haas",
   "license": "MIT",
   "scripts": {
     "test": "playwright test",
+    "test:api": "playwright test --project=api",
     "test:ui": "playwright test --project=ui",
+    "seed": "node scripts/seed.ts",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"

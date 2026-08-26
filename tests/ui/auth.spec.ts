@@ -1,10 +1,5 @@
 import { test, expect } from '@playwright/test';
-
-function requiredEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(`Missing environment variable ${name} — see .env.example`);
-  return value;
-}
+import { requiredEnv } from '../../lib/env.ts';
 
 // UI-02: a valid login must end on an authenticated page (workspace or onboarding),
 // never back on the sign-in form.

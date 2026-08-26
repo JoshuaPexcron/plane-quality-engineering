@@ -67,7 +67,7 @@ async function signUpOrIn(email: string, password: string): Promise<Session> {
 async function json<T>(response: APIResponse): Promise<T> {
   const text = await response.text();
   if (!response.ok()) throw new Error(`${response.url()} -> ${response.status()} ${text}`);
-  return text ? JSON.parse(text) : undefined;
+  return text ? JSON.parse(text) : (undefined as T);
 }
 
 async function ensureWorkspace(admin: Session, workspace: { name: string; slug: string }) {

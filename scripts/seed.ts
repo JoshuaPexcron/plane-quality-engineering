@@ -133,17 +133,17 @@ async function ensureMember(admin: Session, slug: string, email: string, role: n
 }
 
 // Tokens are only readable at creation, so a re-run replaces the old one.
-async function createToken(session: Session): Promise<string> {
+async function createToken(session: Session, label = TOKEN_LABEL): Promise<string> {
   const existing = await json<{ id: string; label: string }[]>(
     await session.api.get('/api/users/api-tokens/'),
   );
-  for (const token of existing.filter((t) => t.label === TOKEN_LABEL)) {
+  for (const token of existing.filter((t) => t.label === label)) {
     await session.api.delete(`/api/users/api-tokens/${token.id}/`, { headers: session.headers });
   }
   const created = await json<{ token: string }>(
     await session.api.post('/api/users/api-tokens/', {
       headers: session.headers,
-      data: { label: TOKEN_LABEL, description: 'created by scripts/seed.ts', never_expires: true },
+      data: { label, description: 'created by scripts/seed.ts', never_expires: true },
     }),
   );
   return created.token;
@@ -172,6 +172,9 @@ await ensureMember(admin, slug, MEMBER_EMAIL, ROLE.member);
 await ensureMember(admin, slug, GUEST_EMAIL, ROLE.guest);
 
 const adminToken = await createToken(admin);
+// A second token for the UI suite: API and UI tests together would blow
+// through one token's 60 requests-per-minute budget.
+const uiToken = await createToken(admin, 'qa-tests-ui');
 const member = await signIn(MEMBER_EMAIL, TEST_PASSWORD);
 const memberToken = await createToken(member);
 await member.api.dispose();
@@ -181,6 +184,7 @@ writeEnv({
   PLANE_WORKSPACE_SLUG: slug,
   PLANE_OTHER_WORKSPACE_SLUG: OTHER_WORKSPACE.slug,
   PLANE_API_TOKEN: adminToken,
+  PLANE_UI_API_TOKEN: uiToken,
   PLANE_MEMBER_API_TOKEN: memberToken,
   PLANE_MEMBER_EMAIL: MEMBER_EMAIL,
   PLANE_GUEST_EMAIL: GUEST_EMAIL,

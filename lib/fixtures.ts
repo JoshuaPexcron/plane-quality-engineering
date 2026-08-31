@@ -13,8 +13,11 @@ type Fixtures = {
 export const test = base.extend<Fixtures>({
   // Playwright requires the destructuring pattern even with no dependencies.
   // eslint-disable-next-line no-empty-pattern
-  api: async ({}, use) => {
-    const api = await newApiContext(requiredEnv('PLANE_API_TOKEN'));
+  api: async ({}, use, testInfo) => {
+    // Each Playwright project runs on its own token: the API and UI suites
+    // together would exceed one token's 60 requests-per-minute budget.
+    const name = testInfo.project.name === 'ui' ? 'PLANE_UI_API_TOKEN' : 'PLANE_API_TOKEN';
+    const api = await newApiContext(requiredEnv(name));
     await use(api);
     await api.dispose();
   },

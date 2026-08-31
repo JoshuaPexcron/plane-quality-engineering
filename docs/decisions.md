@@ -65,3 +65,27 @@ My first version named test projects with a timestamp. Two parallel workers crea
 ## No automatic retry on rate limits
 
 Plane's public API allows 60 requests per minute per token. A full run of the API suite uses about 45, so one run fits and two runs inside the same minute don't. I could catch the 429 and wait, but I'd rather see the failure: it tells me the suite got too chatty and needs a second token or fewer setup calls, not a hidden sleep.
+
+## Storage states instead of logging in per test
+
+A setup project signs in each role once through the real login form and saves the browser state to a file. The UI tests load the admin state by default, and single files override it with the guest state or with none. The logout test signs in fresh instead, because signing out would invalidate the shared session for every test after it.
+
+## Two page objects, not four
+
+The plan budgeted four page objects. My own rule says a screen earns one at three or more tests, and only the login form and the work item list reached that bar. The sidebar, the settings page and the detail panel stay as inline locators. The rule decided, not the plan.
+
+## API setup, UI verification
+
+Every work item test creates its data through the API and checks the result in the UI. That keeps tests fast, and when one fails, it points at the screen under test instead of at setup steps.
+
+## A second API token instead of a raised rate limit
+
+The full suite blew through the 60 requests per minute that one token allows. Raising the limit in my own instance would make the suite pass by changing the product, so the seed script now creates a second token and the UI tests run on their own budget.
+
+## Tuned parallelism instead of retries
+
+When the full suite got flaky, the container logs showed why, not Playwright: the pinned compose file runs one gunicorn worker, and my machine froze all requests for 40 seconds when four browsers ran at once. I raised gunicorn to four workers, capped Playwright at two, and gave tests more room than the defaults, 60 seconds per test and 10 per assertion. Plane in Docker is slower than those defaults assume, and pretending otherwise produces flaky tests.
+
+## Assert what the user sees, not the dialog wrapper
+
+Plane's modal wrapper has no size of its own, so Playwright reports it hidden while the modal is clearly on screen. The tests assert the modal's content instead: the validation message, the form fields. One red test taught me to distrust visibility checks on containers.

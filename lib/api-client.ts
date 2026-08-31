@@ -61,7 +61,7 @@ export function uniqueName(prefix: string): string {
 }
 
 // Project identifiers must be short, uppercase, and unique per workspace.
-function uniqueIdentifier(): string {
+export function uniqueIdentifier(): string {
   return `QA${randomSuffix().toUpperCase()}`;
 }
 
@@ -82,7 +82,7 @@ export async function deleteProject(api: APIRequestContext, projectId: string) {
 export async function createWorkItem(
   api: APIRequestContext,
   projectId: string,
-  data: { name: string; priority?: string; state?: string },
+  data: { name: string; priority?: string; state?: string; assignees?: string[] },
 ) {
   const response = await api.post(`${workspaceUrl}/projects/${projectId}/issues/`, { data });
   if (!response.ok()) {

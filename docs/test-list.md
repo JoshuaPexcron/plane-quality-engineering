@@ -16,7 +16,7 @@ The final list: 33 automated tests, each tagged with the risk it covers. The ris
 | UI-08 | R4   | Delete a project, a confirmation guard is required before anything is destroyed   |
 | UI-09 | R3   | Create a work item with title, priority and assignee, it appears in the list view |
 | UI-10 | R3   | Edit title and priority of a work item, both persist after reload                 |
-| UI-11 | R3   | Change the state of a work item, the list view reflects it                            |
+| UI-11 | R3   | Change the state of a work item, the list view reflects it                        |
 | UI-12 | R3   | Filter work items by state and by assignee, only matching items show              |
 | UI-13 | R7   | Create a work item with an empty title, blocked with a validation message         |
 | UI-14 | R6   | Add a comment to a work item, it shows with correct author and timestamp          |

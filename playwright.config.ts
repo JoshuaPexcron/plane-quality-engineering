@@ -15,6 +15,11 @@ export default defineConfig({
   // other (40s request freezes, killed gunicorn workers); two is what the
   // instance serves reliably, locally and in CI.
   workers: 2,
+  // Plane on a shared machine is slow at auth redirects and full-page
+  // loads; whole-flow tests and single assertions need more room than
+  // Playwright's defaults (30s test, 5s expect).
+  timeout: 60_000,
+  expect: { timeout: 10_000 },
   reporter: [['html'], ['json', { outputFile: 'test-results/results.json' }]],
   use: {
     baseURL: process.env.PLANE_BASE_URL ?? 'http://localhost',

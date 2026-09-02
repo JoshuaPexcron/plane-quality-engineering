@@ -178,6 +178,20 @@
         color: var(--muted);
         font-size: 13px;
       }
+      .section {
+        margin-top: 48px;
+      }
+      .count {
+        font-variant-numeric: tabular-nums;
+      }
+      .count.critical {
+        color: var(--fail);
+        font-weight: 600;
+      }
+      .count.serious {
+        color: var(--flaky);
+        font-weight: 600;
+      }
       footer {
         margin-top: 48px;
         padding-top: 16px;
@@ -228,6 +242,10 @@
           <div class="num">{{DURATION}}</div>
           <div class="label">duration</div>
         </div>
+        <div class="tile">
+          <div class="num">{{A11Y_TOTAL}}</div>
+          <div class="label">a11y violations</div>
+        </div>
       </div>
 
       <h2>Risk coverage</h2>
@@ -249,6 +267,27 @@
         </thead>
         <tbody>
           {{MATRIX_ROWS}}
+        </tbody>
+      </table>
+
+      <h2 class="section">Accessibility</h2>
+      <p class="hint">
+        axe-core scans on three key pages, informational by design: Plane's code is not mine to fix,
+        so the counts are reported against a recorded baseline instead of failing the build. Only a
+        critical rule that is new against the baseline fails the run.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Page</th>
+            <th>Critical</th>
+            <th>Serious</th>
+            <th>Moderate</th>
+            <th>Minor</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{A11Y_ROWS}}
         </tbody>
       </table>
 

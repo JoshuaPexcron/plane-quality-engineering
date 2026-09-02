@@ -6,7 +6,12 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 // Playwright's JSON report, reduced to the fields this script reads.
-type ReportTest = { projectName: string; status: string };
+type Attachment = { name: string; body?: string };
+type ReportTest = {
+  projectName: string;
+  status: string;
+  results: { attachments?: Attachment[] }[];
+};
 type ReportSpec = { title: string; tests: ReportTest[] };
 type ReportSuite = { specs?: ReportSpec[]; suites?: ReportSuite[] };
 type Report = { suites: ReportSuite[]; stats: { startTime: string; duration: number } };
@@ -20,13 +25,23 @@ const template = readFileSync('dashboard/template.html', 'utf8');
 const planeVersion =
   readFileSync('infra/plane/variables.env', 'utf8').match(/^APP_RELEASE=(.+)$/m)?.[1] ?? 'unknown';
 
+type A11ySummary = { page: string; counts: Record<string, number> };
+
 // Flatten the suite tree into one entry per test. The setup project only
 // signs the three roles in; it is infrastructure, not a counted test.
+// The a11y scans attach their violation counts to their test result; the
+// attachment body arrives base64-encoded inside the JSON report.
 const tests: TestResult[] = [];
+const a11ySummaries: A11ySummary[] = [];
 function collect(suite: ReportSuite) {
   for (const spec of suite.specs ?? []) {
-    const { projectName, status } = spec.tests[0];
-    if (projectName !== 'setup') tests.push({ title: spec.title, project: projectName, status });
+    const { projectName, status, results } = spec.tests[0];
+    if (projectName === 'setup') continue;
+    tests.push({ title: spec.title, project: projectName, status });
+    const attached = results.at(-1)?.attachments?.find((a) => a.name === 'a11y-summary');
+    if (attached?.body) {
+      a11ySummaries.push(JSON.parse(Buffer.from(attached.body, 'base64').toString()));
+    }
   }
   (suite.suites ?? []).forEach(collect);
 }
@@ -81,6 +96,23 @@ const matrixRows = risks
   })
   .join('\n');
 
+const a11yRows =
+  a11ySummaries.length > 0
+    ? a11ySummaries
+        .map(({ page, counts }) => {
+          const cell = (impact: string) =>
+            `<td class="count${counts[impact] > 0 ? ` ${impact}` : ''}">${counts[impact]}</td>`;
+          return (
+            `<tr><td>${page.replace(/-/g, ' ')}</td>` +
+            `${cell('critical')}${cell('serious')}${cell('moderate')}${cell('minor')}</tr>`
+          );
+        })
+        .join('\n')
+    : '<tr><td colspan="5"><span class="none">no scan data in this run</span></td></tr>';
+const a11yTotal = a11ySummaries
+  .flatMap((s) => Object.values(s.counts))
+  .reduce((sum, n) => sum + n, 0);
+
 const values: Record<string, string> = {
   PLANE_VERSION: planeVersion,
   RUN_DATE: `${report.stats.startTime.slice(0, 16).replace('T', ' ')} UTC`,
@@ -95,6 +127,8 @@ const values: Record<string, string> = {
   FLAKY: String(flaky),
   DURATION: duration,
   MATRIX_ROWS: matrixRows,
+  A11Y_ROWS: a11yRows,
+  A11Y_TOTAL: a11ySummaries.length > 0 ? String(a11yTotal) : 'n/a',
 };
 
 let html = template;

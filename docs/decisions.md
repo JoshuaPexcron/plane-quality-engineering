@@ -112,4 +112,16 @@ The accessibility risk has no automated tests yet, so its matrix row says "no au
 
 ## Static badge for the test count
 
-The README badge says 30 because a computed badge needs an endpoint or a gist to write into, which is machinery for a number that changes maybe twice more in this project. The cost is manual honesty: when the accessibility scans land, I bump the badge by hand.
+The README badge says 33 because a computed badge needs an endpoint or a gist to write into, which is machinery for a number that changes maybe twice more in this project. The cost is manual honesty: when the test count changes, I bump the badge by hand.
+
+## Accessibility scans stay informational, with a recorded baseline
+
+The three axe-core scans report their violation counts to the dashboard and never fail the build on Plane's existing problems. Plane's code is not mine to fix, so a build that goes red on their violations would only teach me to ignore red builds. The one thing the scans do enforce is a recorded baseline per page: a critical rule that is new against the baseline fails the run. That way the scans catch a regression I introduce or an upgrade brings, without me owning every issue Plane already ships.
+
+## The a11y summary rides in the test report, not a side file
+
+Each scan attaches its counts to its own test result with `testInfo.attach`. The dashboard build script reads them straight out of Playwright's JSON report, the same file it already parses for the risk matrix. I thought about writing a separate results file, but that would mean a second artifact to pass between the CI test job and the publish job. One report in, one page out.
+
+## The UI-07 flake was a shared rate limit, not a slow test
+
+A rename test failed on and off, in CI and locally, always with Plane's "didn't start up correctly" error screen instead of the settings form. The temptation was to add a wait or a retry. The container logs told the real story: Plane's frontend calls `/api/instances/` on every page load, the server allows 30 of those per minute per IP for anonymous callers, and my full run from one IP burned through the budget. Page loads then stalled on the throttled call or died on the error screen. The fix serves that one bootstrap call from a cached copy in the test fixtures, so the browsers stop spending a shared budget on a response that never changes. After the fix a full run drops from a dozen-plus 429s to zero, and the rename test passes even when I exhaust the budget on purpose first. The throttle itself is a real product issue for anyone behind a shared IP, so it also became a bug report. The lesson is the same one the earlier gunicorn flake taught: when a UI test flakes, read the server logs before touching the test.

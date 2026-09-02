@@ -45,5 +45,11 @@ export default defineConfig({
       // override this per file with test.use().
       use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/admin.json' },
     },
+    {
+      name: 'a11y',
+      testDir: './tests/a11y',
+      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/admin.json' },
+    },
   ],
 });

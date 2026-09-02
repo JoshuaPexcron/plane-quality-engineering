@@ -1,4 +1,7 @@
-import { test as setup, expect } from '@playwright/test';
+// The shared fixtures, not bare Playwright: the page fixture there serves
+// /api/instances/ from cache, and the three sign-in loads must not spend
+// the anonymous rate-limit budget either.
+import { test as setup, expect } from '../../lib/fixtures.ts';
 import { LoginPage } from '../../lib/pages/login-page.ts';
 import { requiredEnv } from '../../lib/env.ts';
 

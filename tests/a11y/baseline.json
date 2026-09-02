@@ -1,0 +1,5 @@
+{
+  "login": [],
+  "work-item-list": ["aria-allowed-attr", "button-name"],
+  "work-item-detail": ["button-name", "label"]
+}

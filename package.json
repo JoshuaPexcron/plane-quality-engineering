@@ -10,6 +10,7 @@
     "test": "playwright test",
     "test:api": "playwright test --project=api",
     "test:ui": "playwright test --project=ui",
+    "test:a11y": "playwright test --project=a11y",
     "seed": "node scripts/seed.ts",
     "dashboard": "node scripts/build-dashboard.ts",
     "lint": "eslint . && prettier --check .",
@@ -21,6 +22,7 @@
     "url": "git+https://github.com/JoshuaPexcron/plane-quality-engineering.git"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.3.0",

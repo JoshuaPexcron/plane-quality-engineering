@@ -89,3 +89,27 @@ When the full suite got flaky, the container logs showed why, not Playwright: th
 ## Assert what the user sees, not the dialog wrapper
 
 Plane's modal wrapper has no size of its own, so Playwright reports it hidden while the modal is clearly on screen. The tests assert the modal's content instead: the validation message, the form fields. One red test taught me to distrust visibility checks on containers.
+
+## The dashboard is built, not served
+
+A build script reads Playwright's JSON report, joins the risk tags against a small risk table, and bakes everything into one static HTML page. The page ships zero JavaScript, because the data is already final when CI writes it. Anything that fetches at view time can break in the visitor's browser; a static page can't.
+
+## The dashboard publishes on red runs too
+
+The publish job runs whether the tests passed or failed. A dashboard that only updates on green is an advertisement, not a report. This cost me one lesson: a GitHub Actions `if:` condition without a status function gets an implicit `success()` added, which silently skipped my publish job on the first red run. `!cancelled()` in the condition fixed it.
+
+## Setup logins don't count as tests
+
+The three role sign-ins from the setup project appear in Playwright's report like any other test. The dashboard skips them: counting infrastructure would turn 30 tests into 33 without a single new check. Flaky tests get their own number for the same reason. A test that passed on retry did fail once, and folding it into "passed" would hide exactly the signal my flakiness policy cares about.
+
+## The dashboard reads the version from the pin
+
+The Plane version on the page comes from the `APP_RELEASE` line in the Compose environment file, not from a string I typed. The dashboard can't claim a version the stack doesn't run.
+
+## Coverage gaps are printed, not hidden
+
+The accessibility risk has no automated tests yet, so its matrix row says "no automated coverage yet" instead of showing an empty cell. An empty cell looks like an oversight. A named gap shows the coverage state is known and deliberate.
+
+## Static badge for the test count
+
+The README badge says 30 because a computed badge needs an endpoint or a gist to write into, which is machinery for a number that changes maybe twice more in this project. The cost is manual honesty: when the accessibility scans land, I bump the badge by hand.

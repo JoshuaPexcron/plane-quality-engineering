@@ -84,8 +84,10 @@ jobs:
   publish:
     needs: test
     # Publish whenever the tests actually ran, passed or failed: a red
-    # dashboard is honest and still proves the pipeline works.
-    if: ${{ (needs.test.result == 'success' || needs.test.result == 'failure') && github.ref == 'refs/heads/main' }}
+    # dashboard is honest and still proves the pipeline works. The
+    # !cancelled() matters: without a status function in the condition,
+    # GitHub implicitly adds success() and would skip this job on red runs.
+    if: ${{ !cancelled() && (needs.test.result == 'success' || needs.test.result == 'failure') && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
       pages: write

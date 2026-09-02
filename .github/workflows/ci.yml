@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Weekly Monday run: proves the pipeline and the dashboard stay alive
+    # even without pushes.
+    - cron: '0 6 * * 1'
 
 jobs:
   lint:
@@ -64,7 +68,56 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
+      - name: Upload JSON results for the dashboard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/results.json
+          retention-days: 14
+
       - name: Show container logs on failure
         if: failure()
         working-directory: infra/plane
         run: docker compose --env-file variables.env logs --tail 100 api migrator
+
+  publish:
+    needs: test
+    # Publish whenever the tests actually ran, passed or failed: a red
+    # dashboard is honest and still proves the pipeline works.
+    if: ${{ (needs.test.result == 'success' || needs.test.result == 'failure') && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Download JSON results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
+
+      - name: Download test report
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: public/report/
+
+      # The script only needs Node built-ins, so no npm ci here.
+      - name: Build dashboard
+        run: node scripts/build-dashboard.ts
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+      - id: deployment
+        uses: actions/deploy-pages@v4

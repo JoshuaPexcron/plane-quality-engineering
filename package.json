@@ -11,6 +11,7 @@
     "test:api": "playwright test --project=api",
     "test:ui": "playwright test --project=ui",
     "seed": "node scripts/seed.ts",
+    "dashboard": "node scripts/build-dashboard.ts",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"

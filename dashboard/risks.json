@@ -1,0 +1,10 @@
+[
+  { "id": "R1", "name": "Access control fails", "priority": "High" },
+  { "id": "R2", "name": "Role permissions fail", "priority": "High" },
+  { "id": "R3", "name": "Work item lifecycle breaks", "priority": "High" },
+  { "id": "R4", "name": "Project management breaks", "priority": "Med" },
+  { "id": "R5", "name": "API contract breaks", "priority": "High" },
+  { "id": "R6", "name": "Collaboration breaks", "priority": "Low" },
+  { "id": "R7", "name": "Input validation gaps", "priority": "Med" },
+  { "id": "R8", "name": "Accessibility barriers", "priority": "Med" }
+]
